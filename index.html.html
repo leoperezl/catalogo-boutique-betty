@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Catálogo de Boutique</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- TailwindCSS CDN para estilos rápidos -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body class="bg-gray-100">
+  <div class="min-h-screen flex flex-col">
+    <!-- Encabezado -->
+    <header class="bg-white shadow">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <h1 class="text-xl md:text-2xl font-bold text-gray-800">
+          Catálogo de Boutique
+        </h1>
+        <span class="text-sm text-gray-500">
+          Enlace para enviar por WhatsApp
+        </span>
+      </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 max-w-6xl mx-auto px-4 py-8">
+      <!-- Filtros -->
+      <section
+        class="bg-white rounded-lg shadow p-4 mb-6 grid gap-4 md:grid-cols-4"
+      >
+        <!-- Categoría -->
+        <div>
+          <label
+            for="categoryFilter"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Categoría</label
+          >
+          <select
+            id="categoryFilter"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          >
+            <option value="todas">Todas</option>
+          </select>
+        </div>
+
+        <!-- Subcategoría -->
+        <div>
+          <label
+            for="subcategoryFilter"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Subcategoría</label
+          >
+          <select
+            id="subcategoryFilter"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          >
+            <option value="todas">Todas</option>
+          </select>
+        </div>
+
+        <!-- Género -->
+        <div>
+          <label
+            for="genderFilter"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Género</label
+          >
+          <select
+            id="genderFilter"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          >
+            <option value="todos">Todos</option>
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
+            <option value="unisex">Unisex</option>
+          </select>
+        </div>
+
+        <!-- Buscador -->
+        <div>
+          <label
+            for="searchInput"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Buscar</label
+          >
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Nombre o descripción"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          />
+        </div>
+      </section>
+
+      <!-- Resumen -->
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-gray-800">Productos</h2>
+        <span id="productCount" class="text-sm text-gray-500"></span>
+      </div>
+
+      <!-- Grid de productos -->
+      <section
+        id="productGrid"
+        class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        <!-- Aquí se inyectan las tarjetas por JavaScript -->
+      </section>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-white border-t">
+      <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-gray-500 flex justify-between">
+        <span>Catálogo privado • Solo admin puede editar productos</span>
+        <span>Creado para enviar por WhatsApp</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Lógica de la página -->
+  <script>
+    // ==============================
+    // CONFIGURACIÓN: TUS PRODUCTOS
+    // ==============================
+    // Modifica este array para añadir / quitar / editar productos.
+    // Solo tú, editando este archivo, puedes cambiar el catálogo.
+    const PRODUCTS = [
+      // MAQUILLAJE
+      {
+        id: 1,
+        nombre: "Labial Mate Rojo Intenso",
+        categoria: "Maquillaje",
+        subcategoria: "Labios",
+        genero: "unisex",
+        precio: 15.99,
+        descripcion: "Labial líquido mate de larga duración, tono rojo intenso.",
+        imagen: "<a href="https://ibb.co/pBwSsybX"><img src="https://i.ibb.co/pBwSsybX/b.jpg" alt="b" border="0"></a>",
+        disponible: true,
+      },
+      {
+        id: 2,
+        nombre: "Base Líquida Full Cover",
+        categoria: "Maquillaje",
+        subcategoria: "Rostro",
+        genero: "mujer",
+        precio: 24.5,
+        descripcion: "Base de alta cobertura, acabado natural. Varios tonos.",
+        imagen: "https://via.placeholder.com/400x300?text=Base+Liquida",
+        disponible: true,
+      },
+
+      // ZAPATOS
+      {
+        id: 3,
+        nombre: "Tenis Deportivos Blancos",
+        categoria: "Zapatos",
+        subcategoria: "Tenis",
+        genero: "hombre",
+        precio: 49.99,
+        descripcion: "Tenis blancos casuales, cómodos para uso diario.",
+        imagen: "https://via.placeholder.com/400x300?text=Tenis+Blancos",
+        disponible: true,
+      },
+      {
+        id: 4,
+        nombre: "Sandalias Elegantes Negras",
+        categoria: "Zapatos",
+        subcategoria: "Sandalias",
+        genero: "mujer",
+        precio: 39.99,
+        descripcion: "Sandalias de tacón medio, perfectas para eventos.",
+        imagen: "https://via.placeholder.com/400x300?text=Sandalias+Negras",
+        disponible: true,
+      },
+
+      // ROPA - HOMBRE
+      {
+        id: 5,
+        nombre: "Pullover Básico Blanco",
+        categoria: "Ropa",
+        subcategoria: "Pullover",
+        genero: "hombre",
+        precio: 19.99,
+        descripcion: "Pullover de algodón, cuello redondo, color blanco.",
+        imagen: "https://via.placeholder.com/400x300?text=Pullover+Hombre+Blanco",
+        disponible: true,
+      },
+      {
+        id: 6,
+        nombre: "Pantalón Jeans Azul",
+        categoria: "Ropa",
+        subcategoria: "Pantalón",
+        genero: "hombre",
+        precio: 34.99,
+        descripcion: "Jeans azul clásico, corte recto.",
+        imagen: "https://via.placeholder.com/400x300?text=Jeans+Hombre",
+        disponible: true,
+      },
+
+      // ROPA - MUJER
+      {
+        id: 7,
+        nombre: "Shorts de Mezclilla",
+        categoria: "Ropa",
+        subcategoria: "Shorts",
+        genero: "mujer",
+        precio: 22.99,
+        descripcion: "Shorts de mezclilla, tiro alto.",
+        imagen: "https://via.placeholder.com/400x300?text=Shorts+Mujer",
+        disponible: true,
+      },
+      {
+        id: 8,
+        nombre: "Pullover Oversize Rosa",
+        categoria: "Ropa",
+        subcategoria: "Pullover",
+        genero: "mujer",
+        precio: 27.5,
+        descripcion: "Pullover oversize, color rosa pastel.",
+        imagen: "https://via.placeholder.com/400x300?text=Pullover+Mujer+Rosa",
+        disponible: true,
+      },
+    ];
+
+    // ==============================
+    // CONFIGURACIÓN WHATSAPP
+    // ==============================
+    // Pon aquí tu número de WhatsApp en formato internacional sin signos.
+    // Ejemplo para USA: 17861234567
+    const WHATSAPP_NUMBER = "17866917005"; // <-- CAMBIA ESTO
+
+    // ==============================
+    // LÓGICA DE FILTROS Y RENDER
+    // ==============================
+
+    const categorySelect = document.getElementById("categoryFilter");
+    const subcategorySelect = document.getElementById("subcategoryFilter");
+    const genderSelect = document.getElementById("genderFilter");
+    const searchInput = document.getElementById("searchInput");
+    const productGrid = document.getElementById("productGrid");
+    const productCount = document.getElementById("productCount");
+
+    const filters = {
+      categoria: "todas",
+      subcategoria: "todas",
+      genero: "todos",
+      search: "",
+    };
+
+    function initFilters() {
+      // Llenar categorías
+      const categorias = Array.from(
+        new Set(PRODUCTS.map((p) => p.categoria))
+      ).sort();
+
+      categorias.forEach((cat) => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        categorySelect.appendChild(opt);
+      });
+
+      updateSubcategoriesOptions();
+
+      // Listeners
+      categorySelect.addEventListener("change", () => {
+        filters.categoria = categorySelect.value;
+        // Cuando cambia la categoría, reiniciamos subcategoría
+        updateSubcategoriesOptions();
+        filters.subcategoria = "todas";
+        subcategorySelect.value = "todas";
+        applyFilters();
+      });
+
+      subcategorySelect.addEventListener("change", () => {
+        filters.subcategoria = subcategorySelect.value;
+        applyFilters();
+      });
+
+      genderSelect.addEventListener("change", () => {
+        filters.genero = genderSelect.value;
+        applyFilters();
+      });
+
+      searchInput.addEventListener("input", () => {
+        filters.search = searchInput.value.toLowerCase();
+        applyFilters();
+      });
+    }
+
+    function updateSubcategoriesOptions() {
+      // Limpiar subcategorías actuales
+      subcategorySelect.innerHTML = "";
+      const defaultOpt = document.createElement("option");
+      defaultOpt.value = "todas";
+      defaultOpt.textContent = "Todas";
+      subcategorySelect.appendChild(defaultOpt);
+
+      // Obtener subcategorías según categoría seleccionada (o todas si 'todas')
+      const subcatsSet = new Set();
+
+      PRODUCTS.forEach((p) => {
+        if (
+          filters.categoria === "todas" ||
+          p.categoria === filters.categoria
+        ) {
+          subcatsSet.add(p.subcategoria);
+        }
+      });
+
+      Array.from(subcatsSet)
+        .sort()
+        .forEach((sub) => {
+          const opt = document.createElement("option");
+          opt.value = sub;
+          opt.textContent = sub;
+          subcategorySelect.appendChild(opt);
+        });
+    }
+
+    function applyFilters() {
+      let filtered = PRODUCTS.filter((p) => p.disponible !== false);
+
+      if (filters.categoria !== "todas") {
+        filtered = filtered.filter((p) => p.categoria === filters.categoria);
+      }
+
+      if (filters.subcategoria !== "todas") {
+        filtered = filtered.filter(
+          (p) => p.subcategoria === filters.subcategoria
+        );
+      }
+
+      if (filters.genero !== "todos") {
+        filtered = filtered.filter((p) => p.genero === filters.genero);
+      }
+
+      if (filters.search && filters.search.trim() !== "") {
+        filtered = filtered.filter((p) => {
+          const texto =
+            (p.nombre + " " + p.descripcion).toLowerCase();
+          return texto.includes(filters.search);
+        });
+      }
+
+      renderProducts(filtered);
+    }
+
+    function renderProducts(list) {
+      productGrid.innerHTML = "";
+
+      if (list.length === 0) {
+        productGrid.innerHTML =
+          '<p class="text-sm text-gray-500 col-span-full">No hay productos que coincidan con los filtros.</p>';
+        productCount.textContent = "0 productos";
+        return;
+      }
+
+      productCount.textContent =
+        list.length === 1
+          ? "1 producto encontrado"
+          : list.length + " productos encontrados";
+
+      list.forEach((p) => {
+        const card = document.createElement("article");
+        card.className =
+          "bg-white rounded-lg shadow overflow-hidden flex flex-col";
+
+        card.innerHTML = `
+          <div class="h-44 bg-gray-200 overflow-hidden">
+            <img
+              src="${p.imagen}"
+              alt="${p.nombre}"
+              class="w-full h-full object-cover"
+              onerror="this.src='https://via.placeholder.com/400x300?text=Sin+Imagen';"
+            />
+          </div>
+          <div class="p-4 flex-1 flex flex-col">
+            <h3 class="text-sm font-semibold text-gray-800 mb-1">
+              ${p.nombre}
+            </h3>
+            <p class="text-xs text-gray-500 mb-1">
+              ${p.categoria} • ${p.subcategoria} • ${
+          p.genero.charAt(0).toUpperCase() + p.genero.slice(1)
+        }
+            </p>
+            <p class="text-sm text-gray-700 mb-2">
+              ${p.descripcion}
+            </p>
+            <div class="mt-auto flex items-center justify-between">
+              <span class="text-base font-bold text-indigo-600">
+                $${p.precio.toFixed(2)}
+              </span>
+              <button
+                class="text-xs bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-2 rounded"
+                onclick="contactarWhatsApp(${p.id})"
+              >
+                Pedir por WhatsApp
+              </button>
+            </div>
+          </div>
+        `;
+
+        productGrid.appendChild(card);
+      });
+    }
+
+    function contactarWhatsApp(productId) {
+      const producto = PRODUCTS.find((p) => p.id === productId);
+      if (!producto) return;
+
+      const mensaje = encodeURIComponent(
+        `Hola, estoy interesado en este producto:\n\n` +
+          `Nombre: ${producto.nombre}\n` +
+          `Categoría: ${producto.categoria} / ${producto.subcategoria}\n` +
+          `Género: ${producto.genero}\n` +
+          `Precio: $${producto.precio.toFixed(2)}\n\n` +
+          `¿Está disponible?`
+      );
+
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${mensaje}`;
+      window.open(url, "_blank");
+    }
+
+    // Hacemos global la función para que el botón la pueda usar
+    window.contactarWhatsApp = contactarWhatsApp;
+
+    // Inicializar
+    initFilters();
+    applyFilters();
+  </script>
+</body>
+</html>
